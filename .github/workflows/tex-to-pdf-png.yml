@@ -3,7 +3,7 @@ name: Compile LaTeX and Convert to PNG
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   compile-and-convert:
