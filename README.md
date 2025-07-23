@@ -9,11 +9,11 @@ Use it on overleaf: [Jake's Resume](https://www.overleaf.com/latex/templates/jak
 ## Resume Preview
 
 ![Resume Preview](resume.png)
-[![Download Resume (PDF)](https://img.shields.io/badge/Download-PDF-blue?style=for-the-badge)](https://raw.githubusercontent.com/ajmalbuv/resume/master/resume.pdf)  
-[![Download Resume (PNG)](https://img.shields.io/badge/Download-PNG-blue?style=for-the-badge)](https://raw.githubusercontent.com/ajmalbuv/resume/master/resume.png)  
+[![Download Resume (PDF)](https://img.shields.io/badge/Download-PDF-blue?style=for-the-badge)](https://raw.githubusercontent.com/fahimfadi/resume/master/resume.pdf)  
+[![Download Resume (PNG)](https://img.shields.io/badge/Download-PNG-blue?style=for-the-badge)](https://raw.githubusercontent.com/fahimfadi/resume/master/resume.png)  
 
 ## Resume No Image
 
 ![Resume No Image](resume-no-image.png)
-[![Download Resume No Image (PDF)](https://img.shields.io/badge/Download-PDF-blue?style=for-the-badge)](https://raw.githubusercontent.com/ajmalbuv/resume/master/resume-no-image.pdf?raw=true)  
-[![Download Resume No Image (PNG)](https://img.shields.io/badge/Download-PNG-blue?style=for-the-badge)](https://raw.githubusercontent.com/ajmalbuv/resume/master/resume-no-image.png?raw=true)  
+[![Download Resume No Image (PDF)](https://img.shields.io/badge/Download-PDF-blue?style=for-the-badge)](https://raw.githubusercontent.com/fahimfadi/resume/master/resume-no-image.pdf?raw=true)  
+[![Download Resume No Image (PNG)](https://img.shields.io/badge/Download-PNG-blue?style=for-the-badge)](https://raw.githubusercontent.com/fahimfadi/resume/master/resume-no-image.png?raw=true)  
