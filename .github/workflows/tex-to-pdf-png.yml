@@ -1,0 +1,41 @@
+name: Compile LaTeX and Convert to PNG
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  compile-and-convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up TeX Live and ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra imagemagick
+
+      - name: Compile .tex files to .pdf
+        run: |
+          find . -name '*.tex' -print0 | while IFS= read -r -d '' file; do
+            pdflatex -interaction=nonstopmode "$file";
+          done
+
+      - name: Convert .pdf to high-quality .png with white background
+        run: |
+          find . -name '*.pdf' -print0 | while IFS= read -r -d '' file; do
+            convert -density 300 "$file" -background white -alpha remove "${file%.pdf}.png";
+          done
+
+      - name: Commit and push results
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add '*.pdf' '*.png'
+          git commit -m "Add compiled PDFs and PNGs"
+          git push
