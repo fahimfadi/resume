@@ -1,0 +1,151 @@
+	\documentclass[a4paper,11pt]{article}
+	
+	\usepackage[empty]{fullpage}
+	\usepackage{titlesec}
+	\usepackage[usenames,dvipsnames]{color}
+	\usepackage{enumitem}
+	\usepackage{fancyhdr}
+	\usepackage[english]{babel}
+	\usepackage{tabularx}
+	\usepackage{fontawesome5}
+	\usepackage{multicol}
+	\usepackage{graphicx}
+	\usepackage[export]{adjustbox}
+	\usepackage[sfdefault]{roboto}
+	\usepackage[hidelinks]{hyperref}
+	\usepackage{montserrat}
+	
+	
+	\setlength{\multicolsep}{3.0pt}
+	\setlength{\columnsep}{5pt}
+	
+	% Adjust footer
+	\pagestyle{fancy}
+	\fancyhf{} % clear all header and footer fields
+	\renewcommand{\headrulewidth}{0pt}
+	\renewcommand{\footrulewidth}{0pt}
+	\setlength{\footskip}{5pt} % Increase footskip to resolve fancyhdr warning
+	
+	% Adjust margins
+	\addtolength{\oddsidemargin}{-0.5in}
+	\addtolength{\evensidemargin}{-0.5in}
+	\addtolength{\textwidth}{1.0in}
+	\addtolength{\topmargin}{-.7in}
+	\addtolength{\textheight}{1.3in}
+	
+	\urlstyle{same}
+	
+	\raggedbottom
+	\raggedright
+	\setlength{\tabcolsep}{0in}
+	
+	% Sections formatting
+	\titleformat{\section}{
+		\vspace{-6pt}\scshape\raggedright\large\bfseries
+	}{}{0em}{}[\color{black}\titlerule \vspace{-7pt}]
+	
+	% Ensure that generate pdf is machine readable/ATS parsable
+	\pdfgentounicode=1
+	
+	% Custom commands
+	\newcommand{\resumeItem}[1]{
+		\item\small{#1 \vspace{-2pt}}
+	}
+	
+	\newcommand{\resumeSubheading}[4]{
+		\vspace{-2pt}\item
+		\begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+			\textbf{#1} & \textbf{\small #2} \\
+			\textit{\small#3} & \textit{\small #4} \\
+		\end{tabular*}\vspace{-7pt}
+	}
+	
+	\newcommand{\resumeProjectHeading}[2]{
+		\item
+		\begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+			\small#1 & \textbf{\small #2} \\
+		\end{tabular*}\vspace{-7pt}
+	}
+	
+	\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+		\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+	\newcommand{\resumeItemListStart}{\begin{itemize}}
+		\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+	
+	\begin{document}
+		\begin{minipage}[c]{0.15\textwidth}
+			{\color{white}\fbox{\includegraphics[width=0.84\textwidth]{photo1.jpg}}}
+		\end{minipage}
+		\begin{minipage}[t]{0.84\textwidth}  % Adjusted width to fill space
+			\begin{center}
+				{\fontfamily{Montserrat-TOsF}\selectfont \textbf{\Huge \scshape {Fahim Firoz Fadi}}} \\ \vspace{1pt}
+				\small{
+					\raisebox{-0.1\height}\faPhone\ \href{tel:+917736634869}{\underline{+91 7736634869}} $|$
+					\raisebox{-0.2\height}\faEnvelope\ \href{mailto:fahimfadi237@gmail.com}{\underline{fahimfadi237@gmail.com}}
+				}
+			\end{center}
+		\end{minipage}
+		\section{Professional Summary }
+		\begin{itemize}[leftmargin=0.15in, label={}]
+			\small{\item{
+					Motivated and service-oriented professional with 3 years of customer service experience at Domino’s. Skilled in handling diverse customers, resolving issues efficiently, and maintaining a calm, friendly attitude under pressure. Passionate about providing a safe and pleasant travel experience to passengers as part of Air Arabia Cabin Crew team Known for strong communication, grooming standards, and a commitment to teamwork and excellence in customer satisfaction.
+			}}
+		\end{itemize}
+		\section{Education}
+		\resumeSubHeadingListStart
+		\resumeSubheading
+		{Krupanidhi Degree College}{Bengaluru, Karnataka}
+		{Bachelor of Computer Applications}{Aug. 2021 -- Sep. 2024}
+		\resumeSubHeadingListEnd
+		\section{Professional Experience }
+		\resumeSubHeadingListStart
+		\resumeSubheading
+		{Domino's Pizza}{May 2022 -- March 2025}
+		{Customer Service Representative}{Bengaluru, Karnataka}
+		\resumeItemListStart
+		\resumeItem{Delivered high-quality customer service in a fast-paced environment, ensuring satisfaction and brand loyalty.}
+			\resumeItem{Handled customer concerns, feedback, and service requests with professionalism and empathy.}
+			\resumeItem{Maintained excellent product knowledge and communication during peak operations.}
+			\resumeItem{Collaborated with team members to meet daily operational goals and uphold service standards.}
+			\resumeItem{Recognized for punctuality, grooming, and a positive attitude toward both customers and coworkers.}
+		\resumeItemListEnd
+		\resumeSubHeadingListEnd
+		\section{Skills \& Competencies}
+		\begin{itemize}[leftmargin=0.15in, label=\textbullet, itemsep=0pt]
+			\small{
+				\item Customer Relationship Management
+				\item Communication \& Interpersonal Skills
+				\item Cultural Awareness \& Empathy
+				\item Teamwork \& Collaboration
+				\item Problem Solving \& Conflict Resolution
+				\item Professional Grooming \& Poise
+				\item Multitasking \& Time Management
+				\item Attention to Detail \& Service Excellence
+			
+			}
+		\end{itemize}
+		
+		\section{Languages}
+		\begin{itemize}[leftmargin=0.15in, label={}, itemsep=1pt]
+			\small{
+				\item \textbf{English}
+				\item \textbf{Hindi}
+				\item \textbf{Arabic}
+				\item \textbf{Malayalam}
+				\item \textbf{Tamil}
+				\item \textbf{Kannada}
+				\item \textbf{Telugu}
+				\item \textbf{Urdu}
+			}
+		\end{itemize}
+		
+		\section{Cabin Crew Profile}
+		\begin{itemize}[leftmargin=0.15in, label=\textbullet, itemsep=2pt]
+			\small{
+				\item Height: 175 cm \ \textbar\ Weight: 68 kg
+				\item Excellent personal grooming and professional appearance
+				\item Valid passport and travel documents ready
+				\item Willing to relocate and work flexible hours
+			}
+		\end{itemize}
+	\end{document}
