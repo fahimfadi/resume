@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   compile-and-convert:
@@ -11,53 +15,57 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Install TeX Live and ImageMagick
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v3
+
+      - name: Install image tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            texlive-latex-recommended texlive-latex-extra \
-            texlive-fonts-recommended texlive-fonts-extra imagemagick poppler-utils
+          sudo apt-get install -y --no-install-recommends imagemagick poppler-utils
 
       - name: Compile .typ files to .pdf
         run: |
-          shopt -s globstar nullglob
+          set -euo pipefail
           IFS=$'\n'
-          for src in $(find . -type f -name '*.typ' -print0 | xargs -0 -n1); do
+          while IFS= read -r -d '' src; do
             dir=$(dirname "$src")
             base=$(basename "$src" .typ)
-            # compile in file's directory so relative includes work
             (
-              cd "$dir" || exit 1
-              # run pdflatex twice to resolve references (adjust if .typ needs different compile command)
-              pdflatex -interaction=nonstopmode -halt-on-error "$base.typ" >/dev/null 2>&1 || true
-              pdflatex -interaction=nonstopmode -halt-on-error "$base.typ" >/dev/null 2>&1 || true
+              cd "$dir"
+              echo "Compiling $src -> $base.pdf"
+              typst compile --font-path fonts "$base.typ" "$base.pdf"
             )
-          done
+          done < <(find . -type f -name '*.typ' -print0)
 
       - name: Convert first page of PDFs to high-quality PNG with white background
         run: |
-          shopt -s globstar nullglob
-          IFS=$'\n'
-          for pdf in $(find . -type f -name '*.pdf' -print0 | xargs -0 -n1); do
+          set -euo pipefail
+          while IFS= read -r -d '' pdf; do
             out="${pdf%.pdf}.png"
-            # use pdftoppm for better control: create PNG from first page at 300 DPI, then ensure white background
-            tmp_png="$(mktemp --suffix=.png)"
-            pdftoppm -png -r 300 -f 1 -singlefile "$pdf" "${tmp_png%.png}" >/dev/null 2>&1 || true
-            if [ -f "${tmp_png}" ]; then
-              # remove alpha by flattening on white background
-              convert "${tmp_png}" -background white -alpha remove -alpha off "$out"
-              rm -f "${tmp_png}"
+            echo "Rendering ${pdf} -> ${out}"
+            tmpdir=$(mktemp -d)
+            # pdftoppm writes to tmpdir/base-1.png when given prefix
+            pdftoppm -png -r 300 -f 1 -singlefile "$pdf" "$tmpdir/page" >/dev/null 2>&1
+            if [ -f "$tmpdir/page.png" ]; then
+              convert "$tmpdir/page.png" -background white -alpha remove -alpha off "$out"
+              rm -rf "$tmpdir"
+            else
+              echo "Warning: failed to render $pdf"
+              rm -rf "$tmpdir"
             fi
-          done
+          done < <(find . -type f -name '*.pdf' -print0)
 
       - name: Commit and push generated files (if any)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add -A '*.pdf' '*.png'
+          git add -A -- '*.pdf' '*.png' || true
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0
