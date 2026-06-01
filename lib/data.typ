@@ -1,13 +1,13 @@
 // --- Personal Information ---
 #let personal = (
-  name: "AJMAL BASHEER",
-  title: "Full-stack Developer",
+  name: "Fahim Fadi",
+  title: "Product Manager",
   location: "Bengaluru, Karnataka",
-  phone: "+91 9496444520",
-  email: "ajmalbuv@gmail.com",
+  phone: "+91 7736634869",
+  email: "fahimfadi2021@gmail.com",
   linkedin: "linkedin.com/in/ajmalbuv",
-  github: "github.com/ajmalbuv",
-  website: "https://ajmalbuv.pages.dev",
+  // github: "github.com/ajmalbuv",
+  // website: "https://ajmalbuv.pages.dev",
 )
 
 // --- Summary ---

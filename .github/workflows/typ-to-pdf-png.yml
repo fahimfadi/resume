@@ -1,9 +1,13 @@
-name: Compile .typ to PDF and PNG
-
+name: Typst Compilation
 on:
   push:
     branches:
       - main
+    paths:
+      - "**/*.typ"
+      - "lib/**"
+      - "photo.jpg"
+      - "photo1.jpg"
   workflow_dispatch:
 
 permissions:
@@ -13,62 +17,72 @@ jobs:
   compile-and-convert:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
       - name: Setup Typst
         uses: typst-community/setup-typst@v3
 
-      - name: Install image tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends imagemagick poppler-utils
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files_yaml: |
+            lib:
+              - lib/**
+            photo:
+              - photo.jpg
+            root:
+              - "*.typ"
 
-      - name: Compile .typ files to .pdf
+      - name: Determine files to compile
+        id: files
         run: |
-          set -euo pipefail
-          IFS=$'\n'
-          while IFS= read -r -d '' src; do
-            dir=$(dirname "$src")
-            base=$(basename "$src" .typ)
-            (
-              cd "$dir"
-              echo "Compiling $src -> $base.pdf"
-              typst compile --font-path fonts "$base.typ" "$base.pdf"
-            )
-          done < <(find . -type f -name '*.typ' -print0)
-
-      - name: Convert first page of PDFs to high-quality PNG with white background
-        run: |
-          set -euo pipefail
-          while IFS= read -r -d '' pdf; do
-            out="${pdf%.pdf}.png"
-            echo "Rendering ${pdf} -> ${out}"
-            tmpdir=$(mktemp -d)
-            # pdftoppm writes to tmpdir/base-1.png when given prefix
-            pdftoppm -png -r 300 -f 1 -singlefile "$pdf" "$tmpdir/page" >/dev/null 2>&1
-            if [ -f "$tmpdir/page.png" ]; then
-              convert "$tmpdir/page.png" -background white -alpha remove -alpha off "$out"
-              rm -rf "$tmpdir"
-            else
-              echo "Warning: failed to render $pdf"
-              rm -rf "$tmpdir"
-            fi
-          done < <(find . -type f -name '*.pdf' -print0)
-
-      - name: Commit and push generated files (if any)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add -A -- '*.pdf' '*.png' || true
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.rebuild_all }}" == "true" ]] || [[ "${{ steps.changed-files.outputs.lib_any_changed }}" == "true" ]] || [[ "${{ steps.changed-files.outputs.photo_any_changed }}" == "true" ]]; then
+            echo "Lib/Photo changed or manual full rebuild. Recompiling all root Typst files..."
+            FILES=$(find . -maxdepth 1 -name "*.typ" | sed 's|^./||' | xargs)
+          else
+            echo "Source files changed. Compiling only changed files..."
+            FILES="${{ steps.changed-files.outputs.root_all_changed_files }}"
           fi
-          git commit -m "Add/Update compiled PDFs and PNGs from .typ sources"
-          git push
+
+          if [[ -z "$FILES" && ("${{ steps.changed-files.outputs.any_changed }}" == "true" || "${{ github.event_name }}" == "workflow_dispatch") ]]; then
+            echo "FILES is empty but rebuild is required. Falling back to all root files..."
+            FILES=$(find . -maxdepth 1 -name "*.typ" | sed 's|^./||' | xargs)
+          fi
+
+          if [[ -z "$FILES" ]]; then
+            echo "any=false" >> $GITHUB_OUTPUT
+          else
+            echo "any=true" >> $GITHUB_OUTPUT
+            echo "all=$FILES" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Compile Typst files
+        if: steps.files.outputs.any == 'true'
+        run: |
+          for file in ${{ steps.files.outputs.all }}; do
+            [[ "$file" != *.typ ]] && continue
+            [[ "$file" == lib/* ]] && continue
+            [[ "$file" == ./* ]] && file="${file#./}"
+            
+            pdf="${file%.typ}.pdf"
+            echo "Compiling $file..."
+            typst compile --font-path fonts "$file" "$pdf"
+          done
+
+      - name: Convert to PNG
+        if: steps.files.outputs.any == 'true'
+        uses: ./.github/actions/pdf-to-png
+        with:
+          files: ${{ steps.files.outputs.all }}
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Format and compile Typst files"
+          commit_user_name: GitHub Actions
+          commit_user_email: actions@github.com
+          commit_author: Author <actions@github.com>
+          file_pattern: "*.pdf *.png"

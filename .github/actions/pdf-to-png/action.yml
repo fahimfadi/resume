@@ -1,0 +1,38 @@
+name: "PDF to PNG"
+description: "Converts PDF files to PNG using pdftocairo"
+inputs:
+  files:
+    description: "Space-separated list of PDF files to convert"
+    required: true
+  resolution:
+    description: "Resolution in DPI"
+    default: "300"
+runs:
+  using: "composite"
+  steps:
+    - name: Install poppler-utils
+      run: |
+        if command -v apk >/dev/null; then
+          apk add --no-cache poppler-utils
+        elif command -v apt-get >/dev/null; then
+          sudo apt-get update && sudo apt-get install -y poppler-utils
+        fi
+      shell: bash
+    - name: Convert PDF to PNG
+      run: |
+        for file in ${{ inputs.files }}; do
+          [[ ! -f "$file" ]] && continue
+          if [[ "$file" == *.tex ]]; then
+            pdf="${file%.tex}.pdf"
+          elif [[ "$file" == *.typ ]]; then
+            pdf="${file%.typ}.pdf"
+          else
+            pdf="$file"
+          fi
+
+          [[ ! -f "$pdf" ]] && echo "Warning: $pdf not found" && continue
+
+          echo "Converting $pdf to PNG..."
+          pdftocairo -png -singlefile -r ${{ inputs.resolution }} "$pdf" "${pdf%.pdf}"
+        done
+      shell: bash
